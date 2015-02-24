@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# Make echo useful
+alias echo="echo -e"
+
+# Variables
+cds="./.on_cd"
+cdl="./.on_cd_lock"
+cdm="on_cd detected x:\\\n:q"
+cdq="Quit"
+
+# Help option responses
+option_help="-m See on_cd manual\n-o See script options"
+option_manual="on_cd\n=====\n1) Write a script named .on_cd in directory\n2) Add shell function as written in README.md"
+option_options="x - Print .on_cd script\nq - Quit without running script\nenter - Run script as usual"
+option_unknown="Unknown option, please see --help"
+
+# Warning messages
+warning_lock="Lock detected: $cdl"
+
+# Help options
+for option in "$@"
+do
+    case $option in
+        --help) echo "$option_help"     ;;
+        -h)     echo "$option_help"     ;;
+        -m)     echo "$option_manual"   ;;
+        -o)     echo "$option_options"  ;;
+        *)      echo "$option_unknown"  ;;
+    esac
+done
+
+# The script itself
+if [[ -f $cds ]];
+then
+    if [[ -f $cdl ]];
+    then
+        echo $warning_lock
+    else
+        # Create lock
+        touch $cdl
+        # Show on_cd message
+        echo $cdm
+        # Get option
+        read -s -n 1 input
+        case $input in
+            x) cat $cds     ;;
+            q) echo $cdq    ;;
+            "") sh $cds     ;;
+        esac
+        # Remove lock
+        rm $cdl
+        echo "Done"
+    fi
+fi

@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "This is an example on_cd script!"
+echo "You can use on_cd scripts to launch an application,"
+echo "clean up your directory, rm -rf ~/ and so much more!"
+echo "Use at your own risk."
