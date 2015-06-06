@@ -1,13 +1,29 @@
 #!/bin/sh
 
+# Shell colors
+txtblk='\e[0;30m' # Black - Regular
+txtred='\e[0;31m' # Red
+txtgrn='\e[0;32m' # Green
+txtylw='\e[0;33m' # Yellow
+txtblu='\e[0;34m' # Blue
+txtpur='\e[0;35m' # Purple
+txtcyn='\e[0;36m' # Cyan
+txtwht='\e[0;37m' # White
+txtrst='\e[0m'    # Text Reset
+
 # Make echo useful
 alias echo="echo -e"
 
-# Variables
+# Variables: Read RC file or use defaults
 cds="./.on_cd"
 cdl="./.on_cd_lock"
-cdm="on_cd detected x:\\\n:q"
-cdq="Quit"
+if [[ -f ~/.on_cdrc ]]
+then
+    source "$HOME/.on_cdrc"
+else
+    cdm="on_cd detected x:\\\n:q"
+    cdq="Quit"
+fi
 
 # Help option responses
 option_help="-m See on_cd manual\n-o See script options"

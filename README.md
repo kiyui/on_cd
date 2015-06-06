@@ -13,6 +13,11 @@ function cd()
     builtin cd "$*" && on_cd
 }
 ```
+* Optionally, create .on_cdrc to change values
+```
+cdm="on_cd detected x:\\\n:q"
+cdq="Quit"
+```
 
 Warning 
 =======
