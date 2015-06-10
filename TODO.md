@@ -1,10 +1,8 @@
 TODO
 ====
-* Optional colors
-* Change on_cd variables
+* Check script safety before executing
 
 Unsure TODOS
 ============
-* Check script safety before executing
 * Check script permission option
 * Check script md5 option
