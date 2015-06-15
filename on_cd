@@ -15,15 +15,14 @@ txtrst='\e[0m'    # Text Reset
 alias echo="echo -e"
 
 # Variables: Read RC file or use defaults
-cds="./.on_cd"
-cdl="./.on_cd_lock"
 if [[ -f ~/.on_cdrc ]]
 then
     source "$HOME/.on_cdrc"
-else
-    cdm="on_cd detected x:\\\n:q"
-    cdq="Quit"
 fi
+[[ -z $cds ]] && cds="./.on_cd"
+[[ -z $cdl ]] && cdl="./.on_cd_lock"
+[[ -z $cdm ]] && cdm="on_cd detected x:q:enter"
+[[ -z $cdq ]] && cdq="Quit"
 
 # Help option responses
 option_help="-m See on_cd manual\n-o See script options"
