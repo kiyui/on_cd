@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Bash colors
+txtblk='\e[0;30m' # Black - Regular
+txtred='\e[0;31m' # Red
+txtgrn='\e[0;32m' # Green
+txtylw='\e[0;33m' # Yellow
+txtblu='\e[0;34m' # Blue
+txtpur='\e[0;35m' # Purple
+txtcyn='\e[0;36m' # Cyan
+txtwht='\e[0;37m' # White
+txtrst='\e[0m'    # Text Reset
+
+if [[ ! -d ~/".local/share/bin" ]]
+then
+    echo -e "$txtgrn""Creating ~/.local/share/bin""$txtrst"
+    mkdir ~/.local/share/bin
+else
+    echo -e "$txtred""~/.local/share/bin exists.""$txtrst"
+fi
+
+# Copy files
+cp on_cd ~/.local/share/bin
+
+chmod +x ~/.local/share/bin/compile
+
+if [[ $(echo $PATH | grep ~/.local/share/bin) ]]
+then
+    echo -e "$txtred""~/.local/share/bin already in \$PATH""$txtrst"
+else
+    echo -e "$txtred""Adding folder to \$PATH""$txtrst"
+    echo -e "$txtred""Please source ~/.bashrc or reopen bash""$txtrst"
+    echo "export PATH=~/.local/share/bin:"'$PATH' >> ~/.bashrc
+    echo -e "$txtred""If you use a shell other than bash, please do this manually!""$txtrst"
+    echo -e "$txtred""Please consult the README.md on overriding the cd function""$txtrst"
+fi
