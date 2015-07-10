@@ -22,7 +22,7 @@ fi
 # Copy files
 cp on_cd ~/.local/share/bin
 
-chmod +x ~/.local/share/bin/compile
+chmod +x ~/.local/share/bin/on_cd
 
 if [[ $(echo $PATH | grep ~/.local/share/bin) ]]
 then
