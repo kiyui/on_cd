@@ -21,50 +21,80 @@ then
 fi
 [[ -z $cds ]] && cds="./.on_cd"
 [[ -z $cdl ]] && cdl="./.on_cd_lock"
-[[ -z $cdm ]] && cdm="on_cd detected x:q:enter"
-[[ -z $cdq ]] && cdq="Quit"
+[[ -z $cdm ]] && cdm="$txtred""Press ENTER to run script.\n""$txtrst"
+[[ -z $cdq ]] && cdq="$txtred""Quit""$txtrst"
 
-# Help option responses
-option_help="-m See on_cd manual\n-o See script options"
-option_manual="on_cd\n=====\n1) Write a script named .on_cd in directory\n2) Add shell function as written in README.md"
-option_options="x - Print .on_cd script\nq - Quit without running script\nenter - Run script as usual"
-option_unknown="Unknown option, please see --help"
+do_print() {
+    echo -e "$1""$2""$txtrst"
+}
 
-# Warning messages
-warning_lock="Lock detected: $cdl"
+do_help() {
+    if [[ $1 == "-h" || $1 == "--help " ]]
+    then
+        do_print "$txtgrn" "See on_cd manual"
+        do_print "$txtblu" "on_cd -m"
+    elif [[ $1 == "-m" ]]
+    then
+        do_print "$txtblu" "$(curl https://raw.githubusercontent.com/TimurKiyivinski/on_cd/master/README.md 2> /dev/null)"
+    else
+        do_print "$txtred" "Please see: on_cd --help"
+    fi
+}
 
-# Help options
-for option in "$@"
-do
-    case $option in
-        --help) echo "$option_help"     ;;
-        -h)     echo "$option_help"     ;;
-        -m)     echo "$option_manual"   ;;
-        -o)     echo "$option_options"  ;;
-        *)      echo "$option_unknown"  ;;
-    esac
-done
+do_run() {
+    do_print "$txtpur" "Executing script: $1"
+    # Show on_cd message
+    echo $cdm
+    # Get input 
+    read -s -n 1 input
+    # Run script if user presses ENTER
+    if [[ $input == "" ]]
+    then
+        # Create lock
+        cp $cds $cdl
+        # Run script
+        source $cds
+        # Check script for background tasks
+        for ((i = 0; i < ${#executables[@]}; i++))
+        do
+            do_print "$txtred" "Creating background task: ${executables[$i]}"
+            ${executables[$i]} &
+        done
+        # Remove lock
+        rm $cdl
+    else
+        do_print "$txtred" "Cancel executing: $1"
+    fi
 
-# The script itself
-if [[ -f $cds ]];
+    do_print "$txtcyn" "\nDone."
+}
+
+do_term() { 
+    do_print "$txtred" "Killing background processes." 
+    kill $(jobs -p)
+    if [[ -f $cdl ]]
+    then
+        rm $cdl
+    fi
+}
+
+# Main program
+if [[ -f $cds && "$@" == "" ]];
 then
     if [[ -f $cdl ]];
     then
-        echo $warning_lock
+        do_print "$txtylw" "Lock detected: $cdl"
     else
-        # Create lock
-        touch $cdl
-        # Show on_cd message
-        echo $cdm
-        # Get option
-        read -s -n 1 input
-        case $input in
-            x) cat $cds     ;;
-            q) echo $cdq    ;;
-            "") sh $cds     ;;
-        esac
-        # Remove lock
-        rm $cdl
-        echo "Done"
+        do_run $cds
     fi
+else
+    for option in "$@"
+    do
+        do_help $option
+    done
 fi
+
+# Wait for background processes to terminate.
+trap do_term INT 
+trap do_term SIGTERM
+wait
