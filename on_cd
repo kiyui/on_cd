@@ -29,7 +29,7 @@ do_print() {
 }
 
 do_help() {
-    if [[ $1 == "-h" || $1 == "--help " ]]
+    if [[ $1 == "-h" || $1 == "--help" ]]
     then
         do_print "$txtgrn" "See on_cd manual"
         do_print "$txtblu" "on_cd -m"
