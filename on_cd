@@ -60,8 +60,6 @@ do_run() {
             do_print "$txtred" "Creating background task: ${executables[$i]}"
             ${executables[$i]} &
         done
-        # Remove lock
-        rm $cdl
     else
         do_print "$txtred" "Cancel executing: $1"
     fi
@@ -72,10 +70,6 @@ do_run() {
 do_term() { 
     do_print "$txtred" "Killing background processes." 
     kill $(jobs -p)
-    if [[ -f $cdl ]]
-    then
-        rm $cdl
-    fi
 }
 
 # Main program
@@ -84,6 +78,7 @@ then
     if [[ -f $cdl ]];
     then
         do_print "$txtylw" "Lock detected: $cdl"
+        exit
     else
         do_run $cds
     fi
@@ -91,6 +86,7 @@ else
     for option in "$@"
     do
         do_help $option
+        exit
     done
 fi
 
@@ -98,3 +94,10 @@ fi
 trap do_term INT 
 trap do_term SIGTERM
 wait
+
+# Remove lock
+if [[ -f $cdl ]]
+then
+    do_print "$txtylw" "Removing lock."
+    rm $cdl
+fi
